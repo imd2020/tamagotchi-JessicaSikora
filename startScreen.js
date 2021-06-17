@@ -1,4 +1,5 @@
-class StartScreen {
+import Button from "./button.js";
+export default class StartScreen {
   constructor(startFunction) {
     this.buttonWidth = width / 3;
     this.buttonHeight = height / 7;
@@ -7,15 +8,15 @@ class StartScreen {
       2 * (height / 3) - this.buttonHeight / 2,
       this.buttonWidth,
       this.buttonHeight,
-      '#DD9787',
-      'Start',
-      '#F6E7CB',
+      "#DD9787",
+      "Start",
+      "#F6E7CB",
       startFunction
     );
   }
   display() {
     background(243, 231, 206);
-    fill('#678D58');
+    fill("#678D58");
     textSize(width / 8);
     textFont("Courier New");
     let name = "Blubsigotchi";
@@ -38,3 +39,4 @@ class StartScreen {
     );
   }
 }
+

@@ -1,5 +1,6 @@
-class EndScreen {
-  constructor(endFunction, menuFunction) {
+import Button from "./button.js";
+export class EndScreen {
+  constructor(endFunction, restartFunction) {
     this.buttonWidth = width / 3;
     this.buttonHeight = height / 7;
     this.buttonRestart = new Button(
@@ -10,7 +11,7 @@ class EndScreen {
       '#DD9787',
       `Restart`,
       `#F6E7CB`,
-      endFunction
+      restartFunction
     );
     this.buttonMenu = new Button(
       width  - this.buttonWidth ,
@@ -19,8 +20,8 @@ class EndScreen {
       this.buttonHeight,
       '#DD9787',
       `Menu`,
-      `#F6E7CB`
-    //   menuFunction doesnt work?
+      `#F6E7CB`,
+      endFunction
     );
   }
   display() {

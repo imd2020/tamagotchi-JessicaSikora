@@ -1,5 +1,6 @@
-class PauseScreen {
-  constructor(pauseFunction) {
+import Button from "./button.js";
+export default class PauseScreen {
+  constructor(continueFunction) {
     this.buttonWidth = width / 3;
     this.buttonHeight = height / 7;
     this.buttonContinue = new Button(

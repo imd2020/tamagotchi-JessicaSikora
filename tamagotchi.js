@@ -1,16 +1,24 @@
 // dis how I can recall classes (how to use them); only works when the document ist in my script in index
 // Date.now(); (for when I want to use time)
 // timing event in js
+import Blubsi from "./blubsi.js";
+import Button from "./button.js";
+import StartScreen from "./startScreen.js";
+import PauseScreen from "./pauseScreen.js";
+import { EndScreen } from "./endScreen.js";
+
 let startFunction,
   endFunction,
-  pauseFunction,
+  restartFunciton,
   continueFunction,
-  menuFunction,
   startScreen,
+  pauseScreen,
+  endScreen,
   inStart,
   running,
   inPause,
-  inEnd;
+  inEnd,
+  blubsi;
 
 function setup() {
   frameRate(80);
@@ -21,7 +29,9 @@ function setup() {
 
 function fillVariables() {
   startFunction = start;
-  pauseFunction = pause;
+  continueFunction = pause;
+  restartFunciton = restart;
+  // dont make sense
   endScreen = new EndScreen(endFunction);
   pauseScreen = new PauseScreen(continueFunction);
   startScreen = new StartScreen(startFunction);
@@ -29,12 +39,14 @@ function fillVariables() {
   running = false;
   inPause = false;
   inEnd = false;
+  blubsi = new Blubsi();
 }
 
 function windowResized() {
   resizeCanvas(window.innerWidth / 3, window.innerHeight / 2);
   startScreen.update();
   endScreen.update();
+  blubsi.update();
 }
 
 function checkStatus() {}
@@ -43,6 +55,8 @@ function draw() {
   if (inStart) {
     startScreen.display();
   } else if (running) {
+    buttonPause = new Button(i )
+    blubsi.display();
     // implement what the game does when it's running
   } else if (inPause) {
     pauseScreen.display();
@@ -78,3 +92,14 @@ function start() {
 function pause() {
   console.log("pause");
 }
+
+function restart(){
+  running  = true;
+  inEnd = false;
+  blubsi = new Blubsi();
+}
+
+window.draw = draw;
+window.setup = setup;
+window.mousePressed = mousePressed;
+window.onresize = windowResized;

@@ -1,4 +1,4 @@
-class Button {
+export default class Button {
   constructor(x, y, width, height, colour, text, textColour, hit) {
     this.x = x;
     this.y = y;
