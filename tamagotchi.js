@@ -10,6 +10,8 @@ import { EndScreen } from "./endScreen.js";
 let startFunction,
   endFunction,
   restartFunciton,
+  pauseFunction,
+  buttonPause,
   continueFunction,
   startScreen,
   pauseScreen,
@@ -29,8 +31,9 @@ function setup() {
 
 function fillVariables() {
   startFunction = start;
-  continueFunction = pause;
+  continueFunction = continuee;
   restartFunciton = restart;
+  pauseFunction = pause;
   // dont make sense
   endScreen = new EndScreen(endFunction);
   pauseScreen = new PauseScreen(continueFunction);
@@ -39,7 +42,19 @@ function fillVariables() {
   running = false;
   inPause = false;
   inEnd = false;
-  blubsi = new Blubsi();
+  let cookie = readCookie();
+  blubsi = new Blubsi(cookie);
+  // x, y, width, height, colour, text, textColour, hit
+  buttonPause = new Button(
+    (width * 8) / 10,
+    height / 10,
+    width / 10,
+    height / 10,
+    "#DD9787",
+    `⏸`,
+    `#F6E7CB`,
+    pauseFunction
+  );
 }
 
 function windowResized() {
@@ -47,16 +62,31 @@ function windowResized() {
   startScreen.update();
   endScreen.update();
   blubsi.update();
+  buttonPause.resize((width * 8) / 10, height / 10, width / 10, height / 10);
 }
 
-function checkStatus() {}
+function checkStatus() {
+  blubsi.updateStatus();
+  bakeCookie(blubsi.becomeCookie());
+}
+
+function bakeCookie(value) {
+  let cookie = ["blubsi", "=", JSON.stringify(value)].join("");
+  document.cookie = cookie;
+}
+
+function readCookie() {
+  let result = document.cookie.match(new RegExp("blubsi=([^;]+)"));
+  result && (result = JSON.parse(result[1]));
+  return result;
+}
 
 function draw() {
   if (inStart) {
     startScreen.display();
   } else if (running) {
-    buttonPause = new Button(i )
     blubsi.display();
+    buttonPause.display();
     // implement what the game does when it's running
   } else if (inPause) {
     pauseScreen.display();
@@ -72,9 +102,10 @@ function mousePressed() {
   if (inStart) {
     startScreen.hitTest(mouseX, mouseY);
   } else if (running) {
+    buttonPause.hitTest(mouseX, mouseY);
     // implement what the game does when it's running
   } else if (inPause) {
-    pause.Screen.hitTest(mouseX, mouseY);
+    pauseScreen.hitTest(mouseX, mouseY);
     // insert pause screen
   } else if (inEnd) {
     endScreen.hitTest(mouseX, mouseY);
@@ -90,11 +121,18 @@ function start() {
 }
 
 function pause() {
+  running = false;
+  inPause = true;
   console.log("pause");
 }
 
-function restart(){
-  running  = true;
+function continuee() {
+  inPause = false;
+  running = true;
+}
+
+function restart() {
+  running = true;
   inEnd = false;
   blubsi = new Blubsi();
 }

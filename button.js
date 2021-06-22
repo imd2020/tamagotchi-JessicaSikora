@@ -17,6 +17,7 @@ export default class Button {
     ) {
       this.whenPushed();
     }
+    
   }
   display() {
     noStroke();
