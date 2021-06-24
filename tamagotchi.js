@@ -1,33 +1,38 @@
 // dis how I can recall classes (how to use them); only works when the document ist in my script in index
 // Date.now(); (for when I want to use time)
 // timing event in js
-// import gsap from "./gsap.min.js";
+import gsap from "./gsap.min.js";
 import Blubsi from "./blubsi.js";
+import Needs from "./needs.js";
 import Button from "./button.js";
 import StartScreen from "./startScreen.js";
 import PauseScreen from "./pauseScreen.js";
 import { EndScreen } from "./endScreen.js";
 
-let startFunction,
-  // esc = {
-  //   y:height/2,
-  // };
-  endFunction,
-  restartFunciton,
-  pauseFunction,
-  continueFunction,
-  startScreen,
-  pauseScreen,
-  endScreen,
-  inStart,
-  running,
-  inPause,
-  inEnd,
-  blubsi,
-  img1 = loadImage("gamePics/funLight.png"),
-  img2 = loadImage("gamePics/hungryLight.png"),
-  img3 = loadImage("gamePics/sleepLight.png"),
-  img4 = loadImage("gamePics/thirstLight.png");
+let startFunction;
+let endFunction;
+let pauseFunction;
+let restartFunction;
+let continueFunction;
+let buttonSleep;
+let startScreen;
+let pauseScreen;
+let endScreen;
+let inStart;
+let inPause;
+let inEnd;
+let running;
+let blubsi;
+
+let esc = {
+  y:height/2,
+};
+
+let img = loadImage("gamePics/funLight.png");
+let img2 = loadImage("gamePics/hungryLight.png");
+let img3 = loadImage("gamePics/sleepLight.png");
+let img4 = loadImage("gamePics/thirstLight.png");
+
 function setup() {
   frameRate(80);
   createCanvas(window.innerWidth / 3, window.innerHeight / 2);
@@ -35,17 +40,27 @@ function setup() {
   window.setInterval(checkStatus, 1000);
 }
 
-// function escabe(){
-//   fill(0);
-//   textSize(60);
-//   text("press esc to pause", width/5, esc.y);
-// }
+function escabe(){
+  fill(0);
+  textSize(60);
+  text("press esc to pause", width/5, esc.y);
+}
 
 function fillVariables() {
   startFunction = start;
   continueFunction = continuee;
-  restartFunciton = restart;
+  restartFunction = restart;
   pauseFunction = pause;
+  buttonSleep = new Button(
+    (width * 8) / 10,
+    height / 10,
+    width / 10,
+    height / 10,
+    "#DD9787",
+    `sleep`,
+    `#F6E7CB`,
+    sleepFunction
+  );
   // dont make sense
   endScreen = new EndScreen(endFunction);
   pauseScreen = new PauseScreen(continueFunction);
@@ -64,7 +79,7 @@ function windowResized() {
   startScreen.update();
   endScreen.update();
   blubsi.update();
-  
+  buttonSleep.resize((width * 8) / 10, height / 10, width / 10, height / 10);
 }
 
 function checkStatus() {
@@ -83,30 +98,45 @@ function readCookie() {
   return result;
 }
 function icons() {
-  image(img1, width / 60, height / 4, height / 4, height / 4);
-  image(img2, width / 60, (2 * height) / 4, height / 4, height / 4);
-  image(img3, width / 60, (3 * height) / 4, height / 4, height / 4);
-  image(img4, width / 60, (4 * height) / 4, height / 4, height / 4);
+  image(img, 0, 0, height / 4, height / 4);
+  image(img2, 0, height / 4, height / 4, height / 4);
+  image(img3, 0, (2 * height) / 4, height / 4, height / 4);
+  image(img4, 0, (3 * height) / 4, height / 4, height / 4);
+  let status = blubsi.checkStatus();
+  fill("#DD9787");
+  for (let i = 0; i < 4; i++) {
+    rect(
+      height / 4,
+      ((i * 4 + 1.5) * height) / 16,
+      (status[i] * width) / (8 * (Needs.MAX_VALUE - Needs.MIN_VALUE)),
+      height / 16
+    );
+  }
+}
+
+function sleepFunction() {
+  blubsi.sleep();
 }
 
 function draw() {
   if (inStart) {
     clear();
     startScreen.display();
-    // escabe();
-    // gsap.to(esc,{
-    //   duration:2,
-    //   y: height/2,
-    //   onComplete:() => {
-    //     gsap.to(esc,{
-    //       duration:1,
-    //       y:height/3,
-    //     })
-    //   }
-    // })
+    escabe();
+    gsap.to(esc,{
+      duration:2,
+      y: height/2,
+      onComplete:() => {
+        gsap.to(esc,{
+          duration:1,
+          y:height/3,
+        })
+      }
+    })
   } else if (running) {
     blubsi.display();
     icons();
+    buttonSleep.display();
     // implement what the game does when it's running
   } else if (inPause) {
     pauseScreen.display();
@@ -130,6 +160,7 @@ function mousePressed() {
   if (inStart) {
     startScreen.hitTest(mouseX, mouseY);
   } else if (running) {
+    buttonSleep.hitTest(mouseX, mouseY);
     // implement what the game does when it's running
   } else if (inPause) {
     pauseScreen.hitTest(mouseX, mouseY);
