@@ -1,6 +1,7 @@
 // dis how I can recall classes (how to use them); only works when the document ist in my script in index
 // Date.now(); (for when I want to use time)
 // timing event in js
+// import gsap from "./gsap.min.js";
 import Blubsi from "./blubsi.js";
 import Button from "./button.js";
 import StartScreen from "./startScreen.js";
@@ -8,10 +9,12 @@ import PauseScreen from "./pauseScreen.js";
 import { EndScreen } from "./endScreen.js";
 
 let startFunction,
+  // esc = {
+  //   y:height/2,
+  // };
   endFunction,
   restartFunciton,
   pauseFunction,
-  buttonPause,
   continueFunction,
   startScreen,
   pauseScreen,
@@ -32,6 +35,12 @@ function setup() {
   window.setInterval(checkStatus, 1000);
 }
 
+// function escabe(){
+//   fill(0);
+//   textSize(60);
+//   text("press esc to pause", width/5, esc.y);
+// }
+
 function fillVariables() {
   startFunction = start;
   continueFunction = continuee;
@@ -48,16 +57,6 @@ function fillVariables() {
   let cookie = readCookie();
   blubsi = new Blubsi(cookie);
   // x, y, width, height, colour, text, textColour, hit
-  buttonPause = new Button(
-    (width * 8) / 10,
-    height / 10,
-    width / 10,
-    height / 10,
-    "#DD9787",
-    `⏸`,
-    `#F6E7CB`,
-    pauseFunction
-  );
 }
 
 function windowResized() {
@@ -65,7 +64,7 @@ function windowResized() {
   startScreen.update();
   endScreen.update();
   blubsi.update();
-  buttonPause.resize((width * 8) / 10, height / 10, width / 10, height / 10);
+  
 }
 
 function checkStatus() {
@@ -83,18 +82,31 @@ function readCookie() {
   result && (result = JSON.parse(result[1]));
   return result;
 }
-function icons() {}
+function icons() {
+  image(img1, width / 60, height / 4, height / 4, height / 4);
+  image(img2, width / 60, (2 * height) / 4, height / 4, height / 4);
+  image(img3, width / 60, (3 * height) / 4, height / 4, height / 4);
+  image(img4, width / 60, (4 * height) / 4, height / 4, height / 4);
+}
 
 function draw() {
   if (inStart) {
+    clear();
     startScreen.display();
+    // escabe();
+    // gsap.to(esc,{
+    //   duration:2,
+    //   y: height/2,
+    //   onComplete:() => {
+    //     gsap.to(esc,{
+    //       duration:1,
+    //       y:height/3,
+    //     })
+    //   }
+    // })
   } else if (running) {
     blubsi.display();
-    buttonPause.display();
-    image(img1, width / 60, height / 100, width / 6, width / 6);
-    image(img2, width / 60, height / 5.5, width / 6, width / 6);
-    image(img3, width / 60, height / 2, width / 6, width / 6);
-    image(img4, width / 60, height / 3 + 1, width / 6, width / 6);
+    icons();
     // implement what the game does when it's running
   } else if (inPause) {
     pauseScreen.display();
@@ -106,11 +118,18 @@ function draw() {
   }
 }
 
+function keyPressed() {
+  if (running && keyCode === 27) {
+    pause();
+  } else if (pause && keyCode === 27) {
+    continuee();
+  }
+}
+
 function mousePressed() {
   if (inStart) {
     startScreen.hitTest(mouseX, mouseY);
   } else if (running) {
-    buttonPause.hitTest(mouseX, mouseY);
     // implement what the game does when it's running
   } else if (inPause) {
     pauseScreen.hitTest(mouseX, mouseY);
@@ -149,3 +168,4 @@ window.draw = draw;
 window.setup = setup;
 window.mousePressed = mousePressed;
 window.onresize = windowResized;
+window.keyPressed = keyPressed;
