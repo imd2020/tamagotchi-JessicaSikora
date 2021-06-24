@@ -20,8 +20,11 @@ let startFunction,
   running,
   inPause,
   inEnd,
-  blubsi;
-
+  blubsi,
+  img1 = loadImage("gamePics/funLight.png"),
+  img2 = loadImage("gamePics/hungryLight.png"),
+  img3 = loadImage("gamePics/sleepLight.png"),
+  img4 = loadImage("gamePics/thirstLight.png");
 function setup() {
   frameRate(80);
   createCanvas(window.innerWidth / 3, window.innerHeight / 2);
@@ -80,6 +83,7 @@ function readCookie() {
   result && (result = JSON.parse(result[1]));
   return result;
 }
+function icons() {}
 
 function draw() {
   if (inStart) {
@@ -87,6 +91,10 @@ function draw() {
   } else if (running) {
     blubsi.display();
     buttonPause.display();
+    image(img1, width / 60, height / 100, width / 6, width / 6);
+    image(img2, width / 60, height / 5.5, width / 6, width / 6);
+    image(img3, width / 60, height / 2, width / 6, width / 6);
+    image(img4, width / 60, height / 3 + 1, width / 6, width / 6);
     // implement what the game does when it's running
   } else if (inPause) {
     pauseScreen.display();
