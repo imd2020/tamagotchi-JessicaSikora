@@ -1,10 +1,7 @@
-// date:25.06.2021: animation with gsap unsuccessful due to unexplained error "Uncaught SyntaxError: import not found: default tamagotchi.js:4:7 (now moved due to comment tamagotchi.js:7:7)"
-// let esc and escabe uncommented but available, solution 404
-
+// only whay I got the animation to work is like this
 // dis how I can recall classes (how to use them); only works when the document ist in my script in index
 // Date.now(); (for when I want to use time)
 // timing event in js
-// import gsap from "./gsap.min.js";
 import ImageButton from "./imageButton.js";
 import Blubsi from "./blubsi.js";
 import Needs from "./needs.js";
