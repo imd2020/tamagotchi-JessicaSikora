@@ -40,24 +40,24 @@ let funLight = loadImage("gamePics/funLight.png");
 let hungryLight = loadImage("gamePics/hungryLight.png");
 let sleepLight = loadImage("gamePics/sleepLight.png");
 let thirstLight = loadImage("gamePics/thirstLight.png");
-let dropLight = loadImage("gamePics/dropLight.png");
-let forkLight = loadImage("gamePics/forkLight.png");
-let heartLight = loadImage("gamePics/heartLight.png");
 
 let funDark = loadImage("gamePics/funDark.png");
 let hungryDark = loadImage("gamePics/hungryDark.png");
 let sleepDark = loadImage("gamePics/sleepDark.png");
 let thirstDark = loadImage("gamePics/thirstDark.png");
-let dropDark = loadImage("gamePics/dropDark.png");
-let forkDark = loadImage("gamePics/forkDark.png");
-let heartDark = loadImage("gamePics/heartDark.png");
 
+/**
+ * creates Canvas and fill with inital configuration
+ */
 function setup() {
   frameRate(80);
   createCanvas(window.innerWidth / 3, window.innerHeight / 2);
   fillVariables();
 }
 
+/**
+ * fill / sets all variables
+ */
 function fillVariables() {
   startFunction = start;
   continueFunction = continuee;
@@ -117,6 +117,9 @@ function fillVariables() {
   );
 }
 
+/**
+ * resizes canvas and elements on it
+ */
 function windowResized() {
   resizeCanvas(window.innerWidth / 3, window.innerHeight / 2);
   startScreen.update();
@@ -133,9 +136,13 @@ function windowResized() {
   );
 }
 
+/**
+ * checks status of creature
+ * updated it after a set timeinterval (interval defined in different function)
+ *  updates cookies
+ */
 function checkStatus() {
   blubsi.updateStatus();
-  kill();
   if (blubsi.ded) {
     running = false;
     inEnd = true;
@@ -146,11 +153,19 @@ function checkStatus() {
   }
 }
 
+/**
+ * creates cookie
+ * @param {Object} value information stored in cookie
+ */
 function bakeCookie(value) {
   let cookie = ["blubsi", "=", JSON.stringify(value)].join("");
   document.cookie = cookie;
 }
 
+/**
+ * looks up cookie named blubsi (just looks at it, nothing more)
+ * @returns a blubsi cookie (odd flavour though)
+ */
 function readCookie() {
   let result = document.cookie.match(new RegExp("blubsi=([^;]+)"));
   result && (result = JSON.parse(result[1]));
@@ -158,12 +173,15 @@ function readCookie() {
 }
 
 /**
- * set cookie named blubsi in past so its not valid anymore
+ * set cookie named blubsi in past so its not valid anymore (basically delete cookie)
  */
 function eatCookie() {
   document.cookie = ["blubsi=; expires=Thu, 01-Jan-1970 00:00:01 GMT;"];
 }
 
+/**
+ * draws icons used for needs and visual need values
+ */
 function icons() {
   image(
     !blubsi.isSleeping() ? hungryLight : hungryDark,
@@ -205,6 +223,9 @@ function icons() {
   }
 }
 
+/**
+ * the heart of the game when it comes to visuals
+ */
 function draw() {
   if (inStart) {
     clear();
@@ -237,14 +258,14 @@ function draw() {
       width / 60 + (3 * height) / 8
     );
     let textFun =
-    fun.cooldown !== null
-      ? Math.floor((fun.cooldown - Date.now()) / 1000)
-      : 5 - fun.times;
-  text(
-    textFun,
-    width - height / 4 - textWidth(textFun),
-    width / 60 + (7 * height) / 8
-  );
+      fun.cooldown !== null
+        ? Math.floor((fun.cooldown - Date.now()) / 1000)
+        : 5 - fun.times;
+    text(
+      textFun,
+      width - height / 4 - textWidth(textFun),
+      width / 60 + (7 * height) / 8
+    );
     // implement what the game does when it's running
   } else if (inPause) {
     pauseScreen.display();
@@ -256,6 +277,9 @@ function draw() {
   }
 }
 
+/**
+ * so pause Key (esc) works
+ */
 function keyPressed() {
   if (running && keyCode === 27) {
     pause();
@@ -264,6 +288,9 @@ function keyPressed() {
   }
 }
 
+/**
+ * for player interaction (makes button go vrrrr)
+ */
 function mousePressed() {
   if (inStart) {
     startScreen.hitTest(mouseX, mouseY);
@@ -281,25 +308,37 @@ function mousePressed() {
   }
 }
 
+/**
+ * changes from start to gameScreen and starts checkStatus timer
+ * (every second)
+ */
 function start() {
-  console.log("start");
   inStart = false;
   running = true;
   interval = window.setInterval(checkStatus, 1000);
   // write what happens here
 }
 
+/**
+ * changes from game to pause screen
+ */
 function pause() {
   running = false;
   inPause = true;
-  console.log("pause");
 }
 
+/**
+ * and now from pause to game screen *exciting*
+ */
 function continuee() {
   inPause = false;
   running = true;
 }
 
+/**
+ * restarts game once you end on the end screen, generates a new blob with a new checkStatus timer
+ * (every second, it didn´t change)
+ */
 function restart() {
   running = true;
   inEnd = false;
@@ -307,16 +346,25 @@ function restart() {
   interval = window.setInterval(checkStatus, 1000);
 }
 
+/**
+ * from end to menu, a one way street, with the plus of a new blob
+ */
 function menu() {
   inEnd = false;
   inStart = true;
   blubsi = new Blubsi();
 }
 
+/**
+ * toggle sleep, as often as you want
+ */
 function sleepFunction() {
   blubsi.sleep();
 }
 
+/**
+ * attemps to give food, only successful a few times in a row, after that you have to wait (cooldown)
+ */
 function foodFunction() {
   let item = ["hunger", Math.random() * 20];
   if (food.cooldown !== null && food.cooldown < Date.now()) {
@@ -324,7 +372,6 @@ function foodFunction() {
     blubsi.giveItem(item);
     food.times += 1;
   } else if (food.cooldown !== null && food.cooldown > Date.now()) {
-    return;
   } else {
     blubsi.giveItem(item);
     food.times += 1;
@@ -335,6 +382,9 @@ function foodFunction() {
   }
 }
 
+/**
+ * also tries to give some water, the successrate isn´t any better than before
+ */
 function thirstFunction() {
   let item = ["thirst", Math.random() * 20];
   if (thirst.cooldown !== null && thirst.cooldown < Date.now()) {
@@ -342,7 +392,7 @@ function thirstFunction() {
     blubsi.giveItem(item);
     thirst.times += 1;
   } else if (thirst.cooldown !== null && thirst.cooldown > Date.now()) {
-    return;
+   
   } else {
     blubsi.giveItem(item);
     thirst.times += 1;
@@ -353,6 +403,9 @@ function thirstFunction() {
   }
 }
 
+/**
+ * it doesn´t get better with this one
+ */
 function funFunction() {
   let item = ["fun", Math.random() * 10];
   if (fun.cooldown !== null && fun.cooldown < Date.now()) {
@@ -360,7 +413,7 @@ function funFunction() {
     blubsi.giveItem(item);
     fun.times += 1;
   } else if (fun.cooldown !== null && fun.cooldown > Date.now()) {
-    return;
+   
   } else {
     blubsi.giveItem(item);
     fun.times += 1;
@@ -369,10 +422,6 @@ function funFunction() {
       fun.cooldown = Date.now() + 1000 * 60 * 10;
     }
   }
-}
-
-function kill() {
-  // blubsi.needs[0].needValue = Needs.MIN_VALUE;
 }
 
 window.draw = draw;
