@@ -1,7 +1,11 @@
+// date:25.06.2021: animation with gsap unsuccessful due to unexplained error "Uncaught SyntaxError: import not found: default tamagotchi.js:4:7 (now moved due to comment tamagotchi.js:7:7)"
+// let esc and escabe uncommented but available, solution 404
+
 // dis how I can recall classes (how to use them); only works when the document ist in my script in index
 // Date.now(); (for when I want to use time)
 // timing event in js
-import gsap from "./gsap.min.js";
+// import gsap from "./gsap.min.js";
+import ImageButton from "./imageButton.js";
 import Blubsi from "./blubsi.js";
 import Needs from "./needs.js";
 import Button from "./button.js";
@@ -24,14 +28,14 @@ let inEnd;
 let running;
 let blubsi;
 
-let esc = {
-  y:height/2,
-};
-
-let img = loadImage("gamePics/funLight.png");
-let img2 = loadImage("gamePics/hungryLight.png");
-let img3 = loadImage("gamePics/sleepLight.png");
-let img4 = loadImage("gamePics/thirstLight.png");
+let funLight = loadImage("gamePics/funLight.png");
+let hungryLight = loadImage("gamePics/hungryLight.png");
+let sleepLight = loadImage("gamePics/sleepLight.png");
+let thirstLight = loadImage("gamePics/thirstLight.png");
+let funDark = loadImage("gamePics/funDark.png");
+let hungryDark = loadImage("gamePics/hungryDark.png");
+let sleepDark = loadImage("gamePics/sleepDark.png");
+let thirstDark = loadImage("gamePics/thirstDark.png");
 
 function setup() {
   frameRate(80);
@@ -40,27 +44,12 @@ function setup() {
   window.setInterval(checkStatus, 1000);
 }
 
-function escabe(){
-  fill(0);
-  textSize(60);
-  text("press esc to pause", width/5, esc.y);
-}
-
 function fillVariables() {
   startFunction = start;
   continueFunction = continuee;
   restartFunction = restart;
   pauseFunction = pause;
-  buttonSleep = new Button(
-    (width * 8) / 10,
-    height / 10,
-    width / 10,
-    height / 10,
-    "#DD9787",
-    `sleep`,
-    `#F6E7CB`,
-    sleepFunction
-  );
+
   // dont make sense
   endScreen = new EndScreen(endFunction);
   pauseScreen = new PauseScreen(continueFunction);
@@ -72,6 +61,14 @@ function fillVariables() {
   let cookie = readCookie();
   blubsi = new Blubsi(cookie);
   // x, y, width, height, colour, text, textColour, hit
+  buttonSleep = new ImageButton(
+    blubsi,
+    (width * 8) / 10,
+    height / 10,
+    width / 10,
+    height / 10,
+    sleepFunction
+  );
 }
 
 function windowResized() {
@@ -98,12 +95,36 @@ function readCookie() {
   return result;
 }
 function icons() {
-  image(img, 0, 0, height / 4, height / 4);
-  image(img2, 0, height / 4, height / 4, height / 4);
-  image(img3, 0, (2 * height) / 4, height / 4, height / 4);
-  image(img4, 0, (3 * height) / 4, height / 4, height / 4);
+  image(
+    !blubsi.isSleeping() ? hungryLight : hungryDark,
+    0,
+    0,
+    height / 4,
+    height / 4
+  );
+  image(
+    !blubsi.isSleeping() ? thirstLight : thirstDark,
+    0,
+    height / 4,
+    height / 4,
+    height / 4
+  );
+  image(
+    !blubsi.isSleeping() ? sleepLight : sleepDark,
+    0,
+    (2 * height) / 4,
+    height / 4,
+    height / 4
+  );
+  image(
+    !blubsi.isSleeping() ? funLight : funDark,
+    0,
+    (3 * height) / 4,
+    height / 4,
+    height / 4
+  );
   let status = blubsi.checkStatus();
-  fill("#DD9787");
+  fill(!blubsi.isSleeping() ? "#D4998a" : "#F6E7CB");
   for (let i = 0; i < 4; i++) {
     rect(
       height / 4,
@@ -122,17 +143,6 @@ function draw() {
   if (inStart) {
     clear();
     startScreen.display();
-    escabe();
-    gsap.to(esc,{
-      duration:2,
-      y: height/2,
-      onComplete:() => {
-        gsap.to(esc,{
-          duration:1,
-          y:height/3,
-        })
-      }
-    })
   } else if (running) {
     blubsi.display();
     icons();

@@ -1,19 +1,31 @@
-export default class ImagePause {
-  constructor(img, x, y, width, height, hit) {
+export default class ImageButton {
+  constructor(blubsi, x, y, width, height, hit) {
+    this.blubsi = blubsi;
     this.x = x;
     this.y = y;
     this.width = width;
     this.height = height;
-    this.img = loadImage("gamePics/pauseLight");
-    this.imgPauseDark = loadImage("gamePics/pauseDark");
+    this.img = loadImage("gamePics/LampLight.png");
+    this.imgDark = loadImage("gamePics/LampDark.png");
+    this.whenPushed = hit;
   }
+
   display() {
-    image(this.img, this.x, this.y, this.width, this.height);
+    image(
+      !this.blubsi.isSleeping() ? this.img : this.imgDark,
+      this.x,
+      this.y,
+      this.width,
+      this.height
+    );
   }
-  update() {
-    this.x = (width * 8) / 10;
-    this.y = height / 10;
-    this.width = width / 10;
-    this.height = height / 10;
+
+  hitTest(x, y) {
+    if (
+      (x - this.x) * (x - (this.x + this.width)) <= 0 &&
+      (y - this.y) * (y - (this.y + this.height)) <= 0
+    ) {
+      this.whenPushed();
+    }
   }
 }

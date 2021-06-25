@@ -10,6 +10,7 @@ export default class Button {
     this.textColour = textColour;
     // this.state = stateGame;
   }
+
   hitTest(x, y) {
     if (
       (x - this.x) * (x - (this.x + this.width)) <= 0 &&
@@ -17,8 +18,8 @@ export default class Button {
     ) {
       this.whenPushed();
     }
-    
   }
+
   display() {
     noStroke();
     fill(this.colour);
