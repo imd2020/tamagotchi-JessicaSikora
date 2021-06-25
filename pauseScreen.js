@@ -1,3 +1,6 @@
+/**
+ * nothing much happens, only a pause screen
+ */
 export default class PauseScreen {
   constructor() {}
   display() {

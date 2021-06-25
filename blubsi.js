@@ -1,5 +1,9 @@
 import Needs from "./needs.js";
 export default class Blubsi {
+/**
+ * all the parts that form blubsi (pictures, needs)
+ * @param {Object, null} cookie generates new blob with given cookie, with null it generates a new one
+ */
   constructor(cookie) {
     this.ded = false;
     this.update();
@@ -22,6 +26,9 @@ export default class Blubsi {
       cookie !== null && typeof cookie !== "undefined" ? cookie.bedTime : null;
   }
 
+  /**
+   * visualizes how the ambiance changes when it sleeps or almost dies or just exists
+   */
   display() {
     if (this.isSleeping()) {
       background("#D4998a");
@@ -50,6 +57,10 @@ export default class Blubsi {
     }
   }
 
+  /**
+   * just views if the vitals are good 
+   * @returns {Boolean} true if almost dead
+   */
   isNearDeath() {
     for (let i = 0; i < this.needs.length; i++) {
       if (
@@ -61,6 +72,9 @@ export default class Blubsi {
     return false;
   }
 
+  /**
+   * updates position of blob
+   */
   update() {
     this.x = width / 2 - width / 8;
     this.y = height / 2 - width / 8;
@@ -68,6 +82,11 @@ export default class Blubsi {
     this.height = width / 4;
   }
 
+  /**
+   * how toggle sleep is built 
+   * -> to bed when he´s awake
+   * -> wakes it up when he´s asleep (like a mom)
+   */
   sleep() {
     if (this.bedTime === null) {
       this.bedTime = Date.now();
@@ -82,6 +101,10 @@ export default class Blubsi {
     }
   }
 
+  /**
+   * 
+   * @returns {Boolean} true if he´s sleeping
+   */
   isSleeping() {
     return this.bedTime !== null;
   }
@@ -94,13 +117,20 @@ export default class Blubsi {
     let newList = [];
     for (let i = 0; i < this.needs.length; i++) {
       newList.push([this.needs[i].needName, this.needs[i].updateNeed()]);
-      if (this.needs[i].needValue === Needs.MIN_VALUE ||this.needs[i].needValue >= Needs.MAX_VALUE ) {
+      if (
+        this.needs[i].needValue === Needs.MIN_VALUE ||
+        this.needs[i].needValue >= Needs.MAX_VALUE
+      ) {
         this.ded = true;
       }
     }
     return newList;
   }
 
+  /**
+   * 
+   * @returns {[Number]} all needs that exist are mapped to their need values
+   */
   checkStatus() {
     return this.needs.map((x) => x.needValue);
   }

@@ -5,7 +5,7 @@ export default class Needs {
 
   /**
    *
-   * @param {*} cookie
+   * @param {*} cookie takes the information the cookie has and if there isn´t any, makes a new need
    * @param {String} needName
    * @param {Number} whenDed withing what timeslot is need depleated; unit: h
    * @param {Number} needValue start value
@@ -19,12 +19,13 @@ export default class Needs {
         (Needs.MAX_VALUE - Needs.MIN_VALUE) /
         (whenDed*60 * 60 * 1000);
     }else {
-        Object.assign(this,cookie);
+        Object.assign(this, cookie);
     }
   }
 
   /**
    * updates state since last update
+   * difT= changed value of need value derived using time difference
    * @returns {Number} new needValue
    */
   updateNeed() {

@@ -338,21 +338,23 @@ function continuee() {
 /**
  * restarts game once you end on the end screen, generates a new blob with a new checkStatus timer
  * (every second, it didn´t change)
+ * null because we want no cookies
  */
 function restart() {
   running = true;
   inEnd = false;
-  blubsi = new Blubsi();
+  blubsi = new Blubsi(null);
   interval = window.setInterval(checkStatus, 1000);
 }
 
 /**
  * from end to menu, a one way street, with the plus of a new blob
+ * also no cookies wanted (null)
  */
 function menu() {
   inEnd = false;
   inStart = true;
-  blubsi = new Blubsi();
+  blubsi = new Blubsi(null);
 }
 
 /**
