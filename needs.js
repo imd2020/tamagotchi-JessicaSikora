@@ -50,6 +50,7 @@ export default class Needs {
   //   IDE only accepts numbers
   changeNeedValue(change) {
     this.needValue += change;
+    
     this.checkNeed();
   }
 }

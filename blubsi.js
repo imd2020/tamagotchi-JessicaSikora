@@ -1,15 +1,16 @@
 import Needs from "./needs.js";
 export default class Blubsi {
   constructor(cookie) {
+    this.ded = false;
     this.update();
     this.imgAlive1 = loadImage(`gamePics/blubsiAlive1.png`);
     this.imgAlive2 = loadImage(`gamePics/blubsiAlive2.png`);
     this.imgNearDeath1 = loadImage(`gamePics/blubsiNearDeath1.png`);
     this.imgNearDeath2 = loadImage(`gamePics/blubsiNearDeath2.png`);
-    this.blubsiSleep = loadImage("gamePics/blubsiSleep.png");
-    this.imgDeath = loadImage(`gamePics/blubsDeath.png`);
+    this.blubsiSleep = loadImage("gamePics/blubsiSleep2.png");
+    this.imgDeath = loadImage(`gamePics/blubsDead.png`);
     this.needs =
-      cookie !== null
+      cookie !== null && typeof cookie !== "undefined"
         ? cookie.needs.map((x) => new Needs(x))
         : [
             new Needs(null, "hunger", 2, 50),
@@ -17,8 +18,8 @@ export default class Blubsi {
             new Needs(null, "sleep", 1, 100),
             new Needs(null, "fun", 1, 50),
           ];
-    this.inventory = cookie !== null ? cookie.inventory : [];
-    this.bedTime = null;
+    this.bedTime =
+      cookie !== null && typeof cookie !== "undefined" ? cookie.bedTime : null;
   }
 
   display() {
@@ -51,10 +52,12 @@ export default class Blubsi {
 
   isNearDeath() {
     for (let i = 0; i < this.needs.length; i++) {
-      if (this.needs[i].needValue < (Needs.MAX_VALUE - Needs.MIN_VALUE) * 0.2)
+      if (
+        this.needs[i].needValue < (Needs.MAX_VALUE - Needs.MIN_VALUE) * 0.2 ||
+        this.needs[i].needValue > (Needs.MAX_VALUE - Needs.MIN_VALUE) * 0.8
+      )
         return true;
     }
-
     return false;
   }
 
@@ -91,6 +94,9 @@ export default class Blubsi {
     let newList = [];
     for (let i = 0; i < this.needs.length; i++) {
       newList.push([this.needs[i].needName, this.needs[i].updateNeed()]);
+      if (this.needs[i].needValue === Needs.MIN_VALUE ||this.needs[i].needValue >= Needs.MAX_VALUE ) {
+        this.ded = true;
+      }
     }
     return newList;
   }
@@ -99,25 +105,20 @@ export default class Blubsi {
     return this.needs.map((x) => x.needValue);
   }
 
-  checkInventory() {
-    return this.inventory;
-  }
-  addToInv(item) {
-    this.inventory.push(item);
-  }
   giveItem(item) {
-    if (!this.inventory.includes(item)) {
-      throw "cannot give item that is not in posession";
-    } else {
-      item.needs.forEach((key, value) =>
-        this.needs.filter((y) => y.needName === key)[0].changeNeedValue(value)
-      );
+    if (item[0] === "hunger") {
+      this.needs[0].changeNeedValue(item[1]);
+    } else if (item[0] === "thirst") {
+      this.needs[1].changeNeedValue(item[1]);
+    } else if (item[0] === "fun") {
+      this.needs[3].changeNeedValue(item[1]);
     }
   }
+
   becomeCookie() {
     return {
       needs: this.needs,
-      inventory: this.inventory,
+      bedTime: this.bedTime,
     };
   }
 }

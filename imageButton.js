@@ -1,12 +1,12 @@
 export default class ImageButton {
-  constructor(blubsi, x, y, width, height, hit) {
+  constructor(blubsi, x, y, width, height, hit, img, imgDark) {
     this.blubsi = blubsi;
     this.x = x;
     this.y = y;
     this.width = width;
     this.height = height;
-    this.img = loadImage("gamePics/LampLight.png");
-    this.imgDark = loadImage("gamePics/LampDark.png");
+    this.img = img;
+    this.imgDark = imgDark;
     this.whenPushed = hit;
   }
 
@@ -28,5 +28,11 @@ export default class ImageButton {
       this.whenPushed();
     }
   }
-  
+
+  resize(x, y, width, height) {
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+  }
 }

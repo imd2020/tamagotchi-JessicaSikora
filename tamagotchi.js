@@ -15,10 +15,14 @@ import { EndScreen } from "./endScreen.js";
 
 let startFunction;
 let endFunction;
-let pauseFunction;
 let restartFunction;
+let pauseFunction;
 let continueFunction;
 let buttonSleep;
+let buttonFun;
+let buttonFood;
+let buttonThirst;
+
 let startScreen;
 let pauseScreen;
 let endScreen;
@@ -27,21 +31,31 @@ let inPause;
 let inEnd;
 let running;
 let blubsi;
+let interval;
+let food = { times: 0, cooldown: null };
+let thirst = { times: 0, cooldown: null };
+let fun = { times: 0, cooldown: null };
 
 let funLight = loadImage("gamePics/funLight.png");
 let hungryLight = loadImage("gamePics/hungryLight.png");
 let sleepLight = loadImage("gamePics/sleepLight.png");
 let thirstLight = loadImage("gamePics/thirstLight.png");
+let dropLight = loadImage("gamePics/dropLight.png");
+let forkLight = loadImage("gamePics/forkLight.png");
+let heartLight = loadImage("gamePics/heartLight.png");
+
 let funDark = loadImage("gamePics/funDark.png");
 let hungryDark = loadImage("gamePics/hungryDark.png");
 let sleepDark = loadImage("gamePics/sleepDark.png");
 let thirstDark = loadImage("gamePics/thirstDark.png");
+let dropDark = loadImage("gamePics/dropDark.png");
+let forkDark = loadImage("gamePics/forkDark.png");
+let heartDark = loadImage("gamePics/heartDark.png");
 
 function setup() {
   frameRate(80);
   createCanvas(window.innerWidth / 3, window.innerHeight / 2);
   fillVariables();
-  window.setInterval(checkStatus, 1000);
 }
 
 function fillVariables() {
@@ -49,10 +63,10 @@ function fillVariables() {
   continueFunction = continuee;
   restartFunction = restart;
   pauseFunction = pause;
-
+  endFunction = menu;
   // dont make sense
-  endScreen = new EndScreen(endFunction);
-  pauseScreen = new PauseScreen(continueFunction);
+  endScreen = new EndScreen(endFunction, restartFunction);
+  pauseScreen = new PauseScreen();
   startScreen = new StartScreen(startFunction);
   inStart = true;
   running = false;
@@ -63,11 +77,43 @@ function fillVariables() {
   // x, y, width, height, colour, text, textColour, hit
   buttonSleep = new ImageButton(
     blubsi,
-    (width * 8) / 10,
-    height / 10,
-    width / 10,
-    height / 10,
-    sleepFunction
+    width - height / 4,
+    height / 2,
+    height / 4,
+    height / 4,
+    sleepFunction,
+    loadImage("gamePics/LampLight.png"),
+    loadImage("gamePics/LampDark.png")
+  );
+  buttonFood = new ImageButton(
+    blubsi,
+    width - height / 4,
+    0,
+    height / 4,
+    height / 4,
+    foodFunction,
+    loadImage("gamePics/forkLight.png"),
+    loadImage("gamePics/forkDark.png")
+  );
+  buttonThirst = new ImageButton(
+    blubsi,
+    width - height / 4,
+    height / 4,
+    height / 4,
+    height / 4,
+    thirstFunction,
+    loadImage("gamePics/dropLight.png"),
+    loadImage("gamePics/dropDark.png")
+  );
+  buttonFun = new ImageButton(
+    blubsi,
+    width - height / 4,
+    (3 * height) / 4,
+    height / 4,
+    height / 4,
+    funFunction,
+    loadImage("gamePics/heartLight.png"),
+    loadImage("gamePics/heartDark.png")
   );
 }
 
@@ -76,12 +122,28 @@ function windowResized() {
   startScreen.update();
   endScreen.update();
   blubsi.update();
-  buttonSleep.resize((width * 8) / 10, height / 10, width / 10, height / 10);
+  buttonSleep.resize(width - height / 4, height / 2, height / 4, height / 4);
+  buttonFood.resize(width - height / 4, 0, height / 4, height / 4);
+  buttonThirst.resize(width - height / 4, height / 4, height / 4, height / 4);
+  buttonFun.resize(
+    width - height / 4,
+    (3 * height) / 4,
+    height / 4,
+    height / 4
+  );
 }
 
 function checkStatus() {
   blubsi.updateStatus();
-  bakeCookie(blubsi.becomeCookie());
+  kill();
+  if (blubsi.ded) {
+    running = false;
+    inEnd = true;
+    clearInterval(interval);
+    eatCookie();
+  } else {
+    bakeCookie(blubsi.becomeCookie());
+  }
 }
 
 function bakeCookie(value) {
@@ -94,6 +156,14 @@ function readCookie() {
   result && (result = JSON.parse(result[1]));
   return result;
 }
+
+/**
+ * set cookie named blubsi in past so its not valid anymore
+ */
+function eatCookie() {
+  document.cookie = ["blubsi=; expires=Thu, 01-Jan-1970 00:00:01 GMT;"];
+}
+
 function icons() {
   image(
     !blubsi.isSleeping() ? hungryLight : hungryDark,
@@ -135,10 +205,6 @@ function icons() {
   }
 }
 
-function sleepFunction() {
-  blubsi.sleep();
-}
-
 function draw() {
   if (inStart) {
     clear();
@@ -147,6 +213,38 @@ function draw() {
     blubsi.display();
     icons();
     buttonSleep.display();
+    buttonFood.display();
+    buttonThirst.display();
+    buttonFun.display();
+    fill(!blubsi.isSleeping() ? "#D4998a" : "#F6E7CB");
+    textSize(width / 30);
+    let textFood =
+      food.cooldown !== null
+        ? Math.floor((food.cooldown - Date.now()) / 1000)
+        : 5 - food.times;
+    text(
+      textFood,
+      width - height / 4 - textWidth(textFood),
+      width / 60 + height / 8
+    );
+    let textThirst =
+      thirst.cooldown !== null
+        ? Math.floor((thirst.cooldown - Date.now()) / 1000)
+        : 5 - thirst.times;
+    text(
+      textThirst,
+      width - height / 4 - textWidth(textThirst),
+      width / 60 + (3 * height) / 8
+    );
+    let textFun =
+    fun.cooldown !== null
+      ? Math.floor((fun.cooldown - Date.now()) / 1000)
+      : 5 - fun.times;
+  text(
+    textFun,
+    width - height / 4 - textWidth(textFun),
+    width / 60 + (7 * height) / 8
+  );
     // implement what the game does when it's running
   } else if (inPause) {
     pauseScreen.display();
@@ -171,9 +269,11 @@ function mousePressed() {
     startScreen.hitTest(mouseX, mouseY);
   } else if (running) {
     buttonSleep.hitTest(mouseX, mouseY);
+    buttonFood.hitTest(mouseX, mouseY);
+    buttonThirst.hitTest(mouseX, mouseY);
+    buttonFun.hitTest(mouseX, mouseY);
     // implement what the game does when it's running
   } else if (inPause) {
-    pauseScreen.hitTest(mouseX, mouseY);
     // insert pause screen
   } else if (inEnd) {
     endScreen.hitTest(mouseX, mouseY);
@@ -185,6 +285,7 @@ function start() {
   console.log("start");
   inStart = false;
   running = true;
+  interval = window.setInterval(checkStatus, 1000);
   // write what happens here
 }
 
@@ -203,6 +304,75 @@ function restart() {
   running = true;
   inEnd = false;
   blubsi = new Blubsi();
+  interval = window.setInterval(checkStatus, 1000);
+}
+
+function menu() {
+  inEnd = false;
+  inStart = true;
+  blubsi = new Blubsi();
+}
+
+function sleepFunction() {
+  blubsi.sleep();
+}
+
+function foodFunction() {
+  let item = ["hunger", Math.random() * 20];
+  if (food.cooldown !== null && food.cooldown < Date.now()) {
+    food.cooldown = null;
+    blubsi.giveItem(item);
+    food.times += 1;
+  } else if (food.cooldown !== null && food.cooldown > Date.now()) {
+    return;
+  } else {
+    blubsi.giveItem(item);
+    food.times += 1;
+    if (food.times === 5) {
+      food.times = 0;
+      food.cooldown = Date.now() + 1000 * 60 * 15;
+    }
+  }
+}
+
+function thirstFunction() {
+  let item = ["thirst", Math.random() * 20];
+  if (thirst.cooldown !== null && thirst.cooldown < Date.now()) {
+    thirst.cooldown = null;
+    blubsi.giveItem(item);
+    thirst.times += 1;
+  } else if (thirst.cooldown !== null && thirst.cooldown > Date.now()) {
+    return;
+  } else {
+    blubsi.giveItem(item);
+    thirst.times += 1;
+    if (thirst.times === 5) {
+      thirst.times = 0;
+      thirst.cooldown = Date.now() + 1000 * 60 * 5;
+    }
+  }
+}
+
+function funFunction() {
+  let item = ["fun", Math.random() * 10];
+  if (fun.cooldown !== null && fun.cooldown < Date.now()) {
+    fun.cooldown = null;
+    blubsi.giveItem(item);
+    fun.times += 1;
+  } else if (fun.cooldown !== null && fun.cooldown > Date.now()) {
+    return;
+  } else {
+    blubsi.giveItem(item);
+    fun.times += 1;
+    if (fun.times === 5) {
+      fun.times = 0;
+      fun.cooldown = Date.now() + 1000 * 60 * 10;
+    }
+  }
+}
+
+function kill() {
+  // blubsi.needs[0].needValue = Needs.MIN_VALUE;
 }
 
 window.draw = draw;
