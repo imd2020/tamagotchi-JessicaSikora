@@ -12,7 +12,7 @@ export default class Blubsi {
     this.imgNearDeath1 = loadImage(`gamePics/blubsiNearDeath1.png`);
     this.imgNearDeath2 = loadImage(`gamePics/blubsiNearDeath2.png`);
     this.blubsiSleep = loadImage("gamePics/blubsiSleep2.png");
-    this.imgDeath = loadImage(`gamePics/blubsDead.png`);
+    this.imgDeath = loadImage(`gamePics/blubsiDead.png`);
     this.needs =
       cookie !== null && typeof cookie !== "undefined"
         ? cookie.needs.map((x) => new Needs(x))
