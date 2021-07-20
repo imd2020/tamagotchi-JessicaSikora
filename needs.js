@@ -1,6 +1,6 @@
 export default class Needs {
   // min and max of how much or little it can achieve
-  static MAX_VALUE = 100;
+  static MAX_VALUE = 200;
   static MIN_VALUE = 0;
 
   /**
