@@ -236,6 +236,9 @@ function draw() {
     buttonFun.display();
     fill(!blubsi.isSleeping() ? "#D4998a" : "#F6E7CB");
     textSize(width / 30);
+    if (food.cooldown !== null && food.cooldown < Date.now()) {
+      food.cooldown = null;
+    }
     let textFood =
       food.cooldown !== null
         ? Math.floor((food.cooldown - Date.now()) / 1000)
@@ -245,6 +248,9 @@ function draw() {
       width - height / 4 - textWidth(textFood),
       width / 60 + height / 8
     );
+    if (thirst.cooldown !== null && thirst.cooldown < Date.now()) {
+      thirst.cooldown = null;
+    }
     let textThirst =
       thirst.cooldown !== null
         ? Math.floor((thirst.cooldown - Date.now()) / 1000)
@@ -254,6 +260,9 @@ function draw() {
       width - height / 4 - textWidth(textThirst),
       width / 60 + (3 * height) / 8
     );
+    if (fun.cooldown !== null && fun.cooldown < Date.now()) {
+      fun.cooldown = null;
+    }
     let textFun =
       fun.cooldown !== null
         ? Math.floor((fun.cooldown - Date.now()) / 1000)
@@ -340,6 +349,9 @@ function continuee() {
 function restart() {
   running = true;
   inEnd = false;
+  food = { times: 0, cooldown: null };
+  thirst = { times: 0, cooldown: null };
+  fun = { times: 0, cooldown: null };
   blubsi = new Blubsi(null);
   interval = window.setInterval(checkStatus, 1000);
 }
@@ -366,11 +378,7 @@ function sleepFunction() {
  */
 function foodFunction() {
   let item = ["hunger", Math.random() * 20];
-  if (food.cooldown !== null && food.cooldown < Date.now()) {
-    food.cooldown = null;
-    blubsi.giveItem(item);
-    food.times += 1;
-  } else if (food.cooldown !== null && food.cooldown > Date.now()) {
+  if (food.cooldown !== null && food.cooldown > Date.now()) {
   } else {
     blubsi.giveItem(item);
     food.times += 1;
@@ -386,12 +394,7 @@ function foodFunction() {
  */
 function thirstFunction() {
   let item = ["thirst", Math.random() * 20];
-  if (thirst.cooldown !== null && thirst.cooldown < Date.now()) {
-    thirst.cooldown = null;
-    blubsi.giveItem(item);
-    thirst.times += 1;
-  } else if (thirst.cooldown !== null && thirst.cooldown > Date.now()) {
-   
+  if (thirst.cooldown !== null && thirst.cooldown > Date.now()) {
   } else {
     blubsi.giveItem(item);
     thirst.times += 1;
@@ -407,12 +410,7 @@ function thirstFunction() {
  */
 function funFunction() {
   let item = ["fun", Math.random() * 10];
-  if (fun.cooldown !== null && fun.cooldown < Date.now()) {
-    fun.cooldown = null;
-    blubsi.giveItem(item);
-    fun.times += 1;
-  } else if (fun.cooldown !== null && fun.cooldown > Date.now()) {
-   
+  if (fun.cooldown !== null && fun.cooldown > Date.now()) {
   } else {
     blubsi.giveItem(item);
     fun.times += 1;
