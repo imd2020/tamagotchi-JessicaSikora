@@ -36,6 +36,9 @@ export default class StartScreen {
     text(name, width / 2 - len / 2, height / 3);
     this.buttonStart.display();
 
+    /**
+     * animation for esc text on start screen
+     */
     this.escabe();
     gsap.to(this.esc, {
       duration: 2,
